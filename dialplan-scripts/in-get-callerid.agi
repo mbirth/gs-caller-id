@@ -1,0 +1,43 @@
+#!/usr/bin/php -q
+<?php
+
+define( 'GS_VALID', true );  /// this is a parent file
+require_once( dirName(__FILE__) .'/../inc/conf.php' );
+require_once( GS_DIR .'inc/agi-fns.php' );
+
+ini_set('implicit_flush', 1);
+ob_implicit_flush(1);
+
+$number = trim(@$argv[1]);
+if (empty($number)) die();
+
+gs_agi_verbose( '### Number identification for ' . $number );
+
+require_once( GS_DIR . 'inc/CountryCodes/CountryCodes.class.php' );
+
+$intlnum = $number;
+if (substr($intlnum, 0, 2) == '00') {
+    // int'l number
+    $intlnum = '+' . substr($intlnum, 2);
+} elseif ($number{0} == '0') {
+    // local number
+    $intlnum = '+' . GS_CANONIZE_COUNTRY_CODE . substr($intlnum, 1);
+} else {
+    // plain number
+    $intlnum = '+' . GS_CANONIZE_COUNTRY_CODE . GS_CANONIZE_AREA_CODE . $intlnum;
+}
+gs_agi_verbose( '### Number identification for ' . $intlnum );
+
+$country = CountryCodes::lookupNum($intlnum);
+// will set:
+// $country['Calling Code'] = matched part of number, e.g. "+4930"
+// $country['Country']      = country               , e.g. "Deutschland"
+// $country['CC']           = ISO 2-letter country code, e.g. "DE"
+// $country['District']     = district of country   , e.g. "Berlin"
+// $country['flag']         = <unused>
+
+// file_put_contents('/tmp/countrylookup.txt', print_r($country, true) );
+
+echo 'SET VARIABLE CALLERID(name) ' . gs_agi_str_esc($country['CC'] . ', ' . $country['District']) . "\n";
+
+?>
