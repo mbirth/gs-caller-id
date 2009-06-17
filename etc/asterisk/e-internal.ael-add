@@ -1,2 +1,5 @@
-// add this line:
-AGI(/opt/gemeinschaft/dialplan-scripts/in-get-callerid.agi,${CALLERID(num)});
+// add this line: (country/city lookup)
+AGI(/opt/gemeinschaft/dialplan-scripts/in-get-callerid1.agi,${CALLERID(num)});
+
+// or this line: (online service lookup)
+AGI(/opt/gemeinschaft/dialplan-scripts/in-get-callerid2.agi,${CALLERID(num)});

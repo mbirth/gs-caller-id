@@ -1,0 +1,89 @@
+#!/usr/bin/php -q
+<?php
+
+define( 'GS_VALID', true );  /// this is a parent file
+require_once( dirName(__FILE__) .'/../inc/conf.php' );
+require_once( GS_DIR .'inc/agi-fns.php' );
+
+ini_set('implicit_flush', 1);
+ob_implicit_flush(1);
+
+$number = trim(@$argv[1]);
+if (empty($number)) die();
+
+gs_agi_verbose( '### Number identification for ' . $number );
+
+$intlnum = $number;
+if (substr($intlnum, 0, 2) == '00') {
+    // int'l number
+    $intlnum = '+' . substr($intlnum, 2);
+} elseif ($number{0} == '0') {
+    // local number
+    $intlnum = '+' . GS_CANONIZE_COUNTRY_CODE . substr($intlnum, 1);
+} else {
+    // plain number
+    $intlnum = '+' . GS_CANONIZE_COUNTRY_CODE . GS_CANONIZE_AREA_CODE . $intlnum;
+}
+gs_agi_verbose( '### Canonized number is ' . $intlnum );
+
+$config_file = GS_DIR . 'etc/jf-reverse-lookup.xml';
+$xml = new DOMDocument();
+if (!file_exists($config_file)) echo 'No config!';
+$xml->load($config_file);
+
+$countries =& $xml->getElementsByTagName('country');   // first country entry
+
+for ($i=0; $i<$countries->length; $i++) {
+    $country =& $countries->item($i);
+    $cc = $country->attributes->getNamedItem('code')->nodeValue;
+    if ( $cc == substr($intlnum, 0, strlen($cc)) ) break;
+}
+
+$websites =& $country->getElementsByTagName('website');
+
+for ($i=0; $i<$websites->length; $i++) {
+    $website =& $websites->item($i);
+
+    $wname = $website->attributes->getNamedItem('name')->nodeValue;
+    $wurl  = $website->attributes->getNamedItem('url')->nodeValue;
+    $wpref = $website->attributes->getNamedItem('prefix')->nodeValue;
+    $wentry = $website->getElementsByTagName('entry')->item(0);
+
+    $checknum = $wpref . substr($intlnum, strlen($cc));   // replace int'l prefix by local prefix
+    
+    gs_agi_verbose('Searching ' . $wname . ' (' . ($i+1) . '/' . $websites->length . ')');
+
+    $url = str_replace('$NUMBER', $checknum, $wurl);
+
+    // Had to use wget b/c PHP's file_get_contents() and other tricks didn't succeed (returned wrong data!)
+    exec('wget -q -O - "' . $url . '"', $data);
+    $data = implode("\n", $data);
+
+    gs_agi_verbose('-> got ' . strlen($data) . ' Bytes');
+
+    $lastPos = 0;
+    $details = array();
+    foreach ($wentry->childNodes as $child) {
+        if ($child->nodeType == XML_TEXT_NODE) continue;
+        $ntitle = $child->nodeName;
+        $pattern = $child->nodeValue;
+
+        $matchct = preg_match('/'.$pattern.'/', $data, &$matches, PREG_OFFSET_CAPTURE, $lastPos);
+        if ($matchct == 0) {
+            gs_agi_verbose('NO MATCH FOUND!');
+            break;
+        }
+
+        $details[$ntitle] = rawurldecode($matches[1][0]);
+        $lastPos = $matches[0][1];
+    }
+
+    if (count($details) > 0) break;
+}
+
+// print_r($details);
+if (isset($details['name']) && !empty($details['name'])) {
+    echo 'SET VARIABLE CALLERID(name) ' . gs_agi_str_esc($details['name']) . "\n";
+}
+
+?>
