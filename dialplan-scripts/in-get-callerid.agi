@@ -1,0 +1,27 @@
+#!/usr/bin/php -q
+<?php
+
+define( 'GS_VALID', true );  /// this is a parent file
+require_once( dirName(__FILE__) .'/../inc/conf.php' );
+require_once( GS_DIR .'inc/agi-fns.php' );
+
+ini_set('implicit_flush', 1);
+ob_implicit_flush(1);
+
+$number = trim(@$argv[1]);
+if (empty($number)) die();
+
+gs_agi_verbose( '### Number identification for ' . $number );
+
+require_once( GS_DIR . 'inc/CallerID/CallerID.class.php' );
+CallerID::$countrycode = gs_get_conf('GS_CANONIZE_COUNTRY_CODE', '49');
+CallerID::$areacode    = gs_get_conf('GS_CANONIZE_AREA_CODE', '30');
+
+$info = CallerID::getCallerId($number);
+gs_agi_verbose( '### Number ID result: ' . $info );
+
+if ($info !== false) {
+    echo 'SET VARIABLE CALLERID(name) ' . gs_agi_str_esc($info) . "\n";
+}
+
+?>
