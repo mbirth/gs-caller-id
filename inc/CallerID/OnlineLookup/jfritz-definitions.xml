@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <reverselookup>
-<country code="+1">
-    <website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
-      <entry>
-        <name>class="entry"&gt;([^&lt;]*)&lt;/a&gt;</name>
-        <street>([^,&gt;]*),([^&lt;]*)&lt;br/&gt;</street>
-        <city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
-        <zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
-      </entry>
-    </website>
-</country>
 <country code="+49">
+    <website name="goyellow.de" url="http://www.goyellow.de/schnellsuche/?LIP=simpleSearch&amp;MDN=$NUMBER&amp;LOC=&amp;x=0&amp;y=0" prefix="0">
+        <entry>
+            <name>title="Detailinformationen[^&gt;]+&gt;([^&lt;]*)&lt;/a&gt;</name>
+            <street>class="address"&gt;([^&lt;]*)&lt;b</street>
+            <zipcode>r /&gt;(\d*)</zipcode>
+            <city>/&gt;\d*\W*([^&lt;]*)&lt;</city>
+        </entry>
+    </website>
     <website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;ph=$NUMBER&amp;page=5&amp;context=4&amp;action=43" prefix="0">
       <entry>
         <zipcode>pc: "([^"]*)",</zipcode>
@@ -19,13 +17,21 @@
         <street>st: "([^"]*)",</street>
       </entry>
     </website>
-    <website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;page=RUECKSUCHE&amp;context=RUECKSUCHE&amp;action=STANDARDSUCHE&amp;la=de&amp;rci=no&amp;ph=$NUMBER" prefix="0">
-      <entry>
-        <name>class="entry"&gt;([^&lt;]*)&lt;/a&gt;</name>
-        <street>([^,&gt;]*),([^&lt;]*)&lt;br/&gt;</street>
-        <city>[^,&gt;]*,&amp;nbsp;[^&amp;]*([^&lt;]*)&lt;br/&gt;</city>
-        <zipcode>[^,&gt;]*,&amp;nbsp;([^&amp;]*)[^&lt;]*&lt;br/&gt;</zipcode>
-      </entry>
+    <website name="klicktel.de" url="http://www.klicktel.de/inverssuche/backwardssearch.html?newSearch=1&amp;boxtype=backwards&amp;vollstaendig=$NUMBER" prefix="0">
+        <entry>
+            <name>class="namelink".*&lt;strong&gt;([^&lt;]*)&lt;</name>
+            <street>&lt;p class="data track"&gt;\W*([^&lt;]*)&lt;</street>
+            <zipcode>/&gt;\D*(\d*)</zipcode>
+            <city>.*\d+\W(.*)\r?\n</city>
+        </entry>
+    </website>
+    <website name="11880.com" url="http://www.11880.com/Suche/index.cfm?fuseaction=Suche.rueckwaertssucheresult&amp;init=true&amp;change=false&amp;searchform=Rueckwaerts&amp;tel=$NUMBER" prefix="0">
+        <entry>
+            <name>title="Alle Details anzeigen"&gt;(.*)&lt;</name>
+            <street>&lt;div style="padding-bottom:5px;"&gt;\s*(.*), \d</street>
+            <zipcode>, (\d*)</zipcode>
+            <city>\d+ (.*)&lt;</city>
+        </entry>
     </website>
 </country>
 </reverselookup>
