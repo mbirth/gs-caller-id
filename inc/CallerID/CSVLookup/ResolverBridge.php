@@ -28,15 +28,20 @@ class CallerID_CSVLookup implements CallerIDResolver {
         $csv->close();
 
         $number = self::localizeNumber($number);
+        $wildmatch = false;
 
         foreach ($data as $entry) {
             // CSV format: Name;Number
-            if ($entry[1] == $number) {
+            if ( $entry[1] == $number ) {
+                // perfect match - return directly
                 return $entry[0];
+            } elseif ( fnmatch($entry[1], $number) ) {
+                // wildmatch - memorize and continue search for perfect match
+                $wildmatch = $entry[0];
             }
         }
 
-        return false;
+        return $wildmatch;
     }
 
 }
