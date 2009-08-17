@@ -3,10 +3,10 @@
 <country code="+49">
     <website name="goyellow.de" url="http://www.goyellow.de/schnellsuche/?LIP=simpleSearch&amp;MDN=$NUMBER&amp;LOC=&amp;x=0&amp;y=0" prefix="0">
         <entry>
-            <name>title="Detailinformationen[^&gt;]+&gt;([^&lt;]*)&lt;/a&gt;</name>
-            <street>class="address"&gt;([^&lt;]*)&lt;b</street>
-            <zipcode>r /&gt;(\d*)</zipcode>
-            <city>/&gt;\d*\W*([^&lt;]*)&lt;</city>
+            <name>title="Detailinformationen zu [^&gt;]+&gt;[^&lt;]*&lt;span class="normal"&gt;([^&lt;]*)&lt;/span&gt;</name>
+	    <street>class="street"&gt;([^&lt;]*)&lt;/span</street>
+	    <zipcode>class="postcode"&gt;([^&lt;]*)&lt;/span</zipcode>
+	    <city>class="city"&gt;([^&lt;]*)&lt;/span</city>
         </entry>
     </website>
     <website name="dasoertliche.de" url="http://dasoertliche.de/?form_name=search_inv&amp;ph=$NUMBER&amp;page=5&amp;context=4&amp;action=43" prefix="0">
