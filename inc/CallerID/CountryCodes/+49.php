@@ -28,12 +28,12 @@ foreach ($result as $pre=>$data) {
 
 $db = new CSV();
 $db->setDelimiter(';');
-if (!$db->load(dirname(__FILE__) . DIRECTORY_SEPARATOR . '+49/LosgXXXX.TXT', true)) return $result;
+if (!$db->load(dirname(__FILE__) . DIRECTORY_SEPARATOR . '+49/NVONB.INTERNET.20110711.LGV.csv', true)) return $result;
 $db->setUseHeaders(true);
 
 foreach ($db->getTable() as $loc) {
-    $pre = $loc['Vorwahl'];
-    $ort = $loc['Ortsnetz'];
+    $pre = '0' . $loc['Ortsnetzkennzahl'];
+    $ort = $loc['Ortsnetzname'];
     if (substr($pre, 0, strlen($prefix)) == $prefix) $pre = $cc . substr($pre, strlen($prefix));
     $result[$pre] = array(
         'Calling Code' => $pre,
